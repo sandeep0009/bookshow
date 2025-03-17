@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  password  String
+  email     String    @unique
+  role      RoleBased
+  shows     Shows[]   @relation("OrganizerShows") 
+  bookings  Booking[]
+}
+
+model Shows {
+  id          String    @id @default(uuid())
+  name        String
+  location    String
+  banner      String?
+  eventDate   DateTime
+  organizerId String
+  organizer   User      @relation(fields: [organizerId], references: [id], name: "OrganizerShows")
+  seats       Int
+  seatLayout  Json      
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+}
+
+model Booking {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  showId         String
+  show           Shows     @relation(fields: [showId], references: [id])
+  seatNumbers    Json      
+  paymentStatus  PaymentStatus @default(PENDING)
+  createdAt      DateTime  @default(now())
+}
+
+enum RoleBased {
+  user
+  organiser
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
