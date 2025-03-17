@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
-  name      String
+  name      String    
   password  String
   email     String    @unique
   role      RoleBased
@@ -19,7 +19,7 @@ model User {
 
 model Shows {
   id          String    @id @default(uuid())
-  name        String
+  name        String    @unique
   location    String
   banner      String?
   eventDate   DateTime
